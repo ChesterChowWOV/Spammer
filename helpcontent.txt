@@ -1,0 +1,14 @@
+⚙️About
+`help [command name]`
+`ping`
+`server`
+
+💬Spam
+`spam <content>`
+
+🛠Bot-Developer only
+`announce <content>`
+`restart`
+`off`
+
+*<> means required, [] means optional.*
