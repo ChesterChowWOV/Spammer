@@ -1,10 +1,14 @@
+from replit import db
 from keep_alive import keep_alive
 from discord.ext import commands
+from time import sleep
+import typing
 import discord
 import os
 import time
 import http1
 import json
+import asyncio
 
 PW = os.environ['PW']
 TOKEN = os.environ['TOKEN']
@@ -49,7 +53,7 @@ async def ping(ctx):
     print(f'Ping {int(ping)}ms')
   
 @client.command(name="spam", help="--Spams the text you added after the command", category="Main Function")
-async def spam(ctx, *Text: str): 
+async def spam(ctx, Times: typing.Optional[int]=15, *Text): 
   if ctx.author.id in ublacklist:
         await ctx.message.delete()
         await ctx.send(str(ctx.author.mention)+', you were blacklisted from this bot! DM ChesterWOV#2768 to do the ban appeal.')
@@ -73,46 +77,49 @@ async def spam(ctx, *Text: str):
          await ctx.message.delete()
          await ctx.send(ctx.author.mention+', `spam` is disabled in this channel.')
          return
+       
+  if int(Times) > 30:
+    await ctx.send('Too many times! It can only be repeated under or 30 times!')
+    return
 
   output = ''
   
   for word in Text:
     output += word
     output += ' '
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  await ctx.send(output)
-  time.sleep(.7)
-  
+  for i in range(int(Times)):
+    await ctx.send(output)
+    await asyncio.sleep(.7)
+
 @client.command(name="server")
 async def server(ctx):
   await ctx.send('Want to join the support server? Invite link is here: https://discord.gg/WJqJyRDntD')
+
+@client.command()
+async def remember(ctx, *thing):
+  thingy = ''
+  for word in thing:
+    thingy += word
+    thingy += ' '
+  db[ctx.author.id] = thingy
+  msg = ''
+  msg += 'I remembered \"'
+  msg += thingy
+  msg += '\" now! You can type `s!wihr` anytime to let me say what are the word(s) you stored in my brain.'
+  await ctx.send(msg)
+
+@client.command()
+async def wihr(ctx):
+  await ctx.send('<a:loading_circle:855420234098016256> Fetching data <a:loading_circle:855420234098016256>')
+  dbvalue = db[ctx.author.id]
+  if bool(str(dbvalue)):
+    await asyncio.sleep(1)
+    await ctx.send('<:check:835080284491874314> Data fetched successfully. <:check:835080284491874314>')
+    await ctx.send('Your message is:')
+    asyncio.sleep(.5)
+    await ctx.send(str(dbvalue))
+  else:
+    await ctx.send('Hey '+ctx.author.mention+', seems like you still don\'t have any things stored in my brain!')
   
 @client.command(name="announce", help="--This is an bot developer-only command.", category="Developer Only")
 async def announce(ctx, *Announcement: str):
@@ -170,7 +177,18 @@ async def on_command_error(ctx, error):
 
   message = 'Umm... seems like an unknown error occured. Maybe you can join our support server? Here is the link: https://discord.gg/WJqJyRDntD'
   await ctx.send(message)
-  
+
+def deleteAllDB():
+  keys = db.keys()
+  for i in keys:
+    del db[i]
+
+@client.command() 
+async def deleteData(ctx):
+  if ctx.message.author.id == 788274635871092777:
+    await ctx.send('Deleted things.')
+    deleteAllDB()
+
 async def serverCount():
   print('I am in ' + str(len(client.guilds)) + ' servers!')
 

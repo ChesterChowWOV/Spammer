@@ -1,12 +1,12 @@
-⚙️About
+<:about:854998192390406154>About
 `help [command name]`
 `ping`
 `server`
 
-💬Spam
+<:spam:854998192819404820>Spam
 `spam <content>`
 
-🛠Bot-Developer only
+<:dev_only:854998192629219362>Bot-Developer only
 `announce <content>`
 `restart`
 `off`
