@@ -2,9 +2,11 @@
 `help [command name]`
 `ping`
 `server`
+`invite`
+`info`
 
 <:spam:854998192819404820>Spam
-`spam <content>`
+`spam [times] <content>`
 
 <:dev_only:854998192629219362>Bot-Developer only
 `announce <content>`

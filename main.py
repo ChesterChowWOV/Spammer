@@ -10,9 +10,10 @@ import http1
 import json
 import asyncio
 
+activity = discord.Activity(type=discord.ActivityType.listening, name="s!help")
 PW = os.environ['PW']
 TOKEN = os.environ['TOKEN']
-client = commands.Bot(command_prefix = 's!', help_command=None)
+client = commands.Bot(command_prefix = "s!", help_command=None, activity=activity, status=discord.Status.idle)
 ublacklist = {409369294690975755}
 wblacklist = {"@here", "@everyone","fuck","shit","damn"}
 serverid = {852444192756334592}
@@ -25,6 +26,11 @@ async def on_ready():
   time.sleep(1)
   print('Log in done!')
   return
+
+@client.event
+async def on_message(message):
+  if client.user.mentioned_in(message):
+    await message.channel.send("My prefix is `s!`")
 
 @client.command(name="help")
 async def help(ctx, cmd=''):
@@ -43,6 +49,10 @@ async def help(ctx, cmd=''):
     hpEm.set_footer(text="Tip: Type s!help to see all commands of this bot!")
     await ctx.send(embed=hpEm)
     cmdhelp.close()
+
+@client.command()
+async def invite(ctx):
+  await ctx.send(embed=discord.Embed(title="Invite The Bot", description="Press [here](https://discord.com/api/oauth2/authorize?client_id=852422040878186556&permissions=2251808321&scope=bot) to invite the bot! You can also go to https://spammer.chesterwov.repl.co/invite.html to invite the bot."))
 
 @client.command(name="ping", help="--Sends you a message. This is to make sure the bot works.")
 async def ping(ctx):
@@ -72,11 +82,11 @@ async def spam(ctx, Times: typing.Optional[int]=15, *Text):
        await ctx.send(ctx.author.mention+', `@` is blacklisted from this bot.')
        return
      
-     if ctx.channel.id == 854636337558192138:
-       if ctx.guild.id == serverid:
-         await ctx.message.delete()
-         await ctx.send(ctx.author.mention+', `spam` is disabled in this channel.')
-         return
+  if not ctx.channel.id == 854636337558192138:
+    if ctx.guild.id == serverid:
+      await ctx.message.delete()
+      await ctx.send(ctx.author.mention+', `spam` is disabled in this channel.')
+      return
        
   if int(Times) > 30:
     await ctx.send('Too many times! It can only be repeated under or 30 times!')
@@ -95,6 +105,10 @@ async def spam(ctx, Times: typing.Optional[int]=15, *Text):
 async def server(ctx):
   await ctx.send('Want to join the support server? Invite link is here: https://discord.gg/WJqJyRDntD')
 
+@client.command(aliases=["information"])
+async def info(ctx):
+  await ctx.send(embed=discord.Embed(title="Information", description="Welcome to spammer! This bot is made for people to spam something :/\n\nInformation\n• Name: Spammer [s!]#6830\n• Prefix: s!\n• Developer: ChesterWOV#4052\n• Develop platforms: ⎋repl.it and ⎋uptimerobot.com\n• Code language: Python\n• Python packages used: discord.py; discord.ext commands; keep_alive.py; os; time"))
+  
 @client.command()
 async def remember(ctx, *thing):
   thingy = ''
